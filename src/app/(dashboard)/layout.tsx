@@ -44,6 +44,10 @@ export default function DashboardLayout({
             <span style={{ marginRight: '12px' }}>🏢</span>
             Klanten
           </Link>
+          <Link href="/customs" className="nav-link" onClick={() => setSidebarOpen(false)}>
+            <span style={{ marginRight: '12px' }}>🌍</span>
+            Douane (Overseas)
+          </Link>
           <Link href="/driver" className="nav-link" style={{ marginTop: '24px', backgroundColor: 'var(--background-dark)', color: 'white' }}>
             <span style={{ marginRight: '12px' }}>📱</span>
             Bekijk Chauffeurs App

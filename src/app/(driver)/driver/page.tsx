@@ -115,8 +115,21 @@ export default function DriverPage() {
           <div><span>Pallets</span><strong>{ride.pallets_count || '-'} stks</strong></div>
         </div>
 
-        {ride.status === 'gepland' && (
+        {ride.requires_customs && (
+           <div style={{ backgroundColor: '#7f1d1d', border: '1px solid #ef4444', color: '#fecaca', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
+             <h3 style={{ fontSize: '1rem', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+               <span>🛑</span> DOUANE LOCKDOWN
+             </h3>
+             <p style={{ fontSize: '0.85rem' }}>Deze rit betreft een grensoverschrijdende lading. Je mag pas vertrekken als de planning het MRN / T1 document heeft vrijgegeven.</p>
+           </div>
+        )}
+
+        {ride.status === 'gepland' && !ride.requires_customs && (
           <button className="btn-massive btn-blue" onClick={() => handleStatusUpdate('geladen')}>Start Rit (Gereed voor vertrek)</button>
+        )}
+        
+        {ride.status === 'gepland' && ride.requires_customs && (
+          <button className="btn-massive" style={{ backgroundColor: '#334155', color: '#94a3b8', cursor: 'not-allowed' }}>Wachten op Douane Vrijgave...</button>
         )}
         
         {ride.status === 'geladen' && (
