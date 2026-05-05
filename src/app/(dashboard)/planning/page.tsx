@@ -60,16 +60,21 @@ export default function PlanningPage() {
   if (loading) return <div style={{ padding: '32px' }}>Laden van ritten...</div>;
 
   const columns = [
-    { id: null, name: 'Niet Toegewezen' },
-    ...drivers.map(d => ({ id: d.id, name: d.full_name }))
+    { id: null, name: 'Niet Toegewezen', maxPallets: 999 },
+    ...drivers.map(d => ({ 
+      id: d.id, 
+      name: d.full_name,
+      // Simulatie van voertuig capaciteit voor de demo:
+      maxPallets: d.id === 'd1000000-0000-0000-0000-000000000001' ? 33 : 15 
+    }))
   ];
 
   return (
     <div className="content-area">
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 className="page-title">Rittenplanning (Live)</h2>
-          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.875rem' }}>Sleep ritten naar chauffeurs om ze in te plannen.</p>
+          <h2 className="page-title">Rittenplanning (Masterplan Pro)</h2>
+          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.875rem' }}>AI waarschuwt bij overschrijding van pallet-capaciteit.</p>
         </div>
         <button className="btn btn-primary">+ Nieuwe Rit Inplannen</button>
       </div>
@@ -77,16 +82,26 @@ export default function PlanningPage() {
       <div className="kanban-board">
         {columns.map(driver => {
           const driverRides = rides.filter(r => r.driver_id === driver.id);
+          const totalPallets = driverRides.reduce((sum, r) => sum + (r.pallets_count || 0), 0);
+          const isOverCapacity = driver.id !== null && totalPallets > driver.maxPallets;
           
           return (
             <div 
               key={driver.id || 'unassigned'} 
               className="kanban-column"
+              style={{ border: isOverCapacity ? '2px solid #ef4444' : '1px solid var(--border-color)' }}
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, driver.id)}
             >
-              <div className="kanban-header">
-                <span>{driver.name}</span>
+              <div className="kanban-header" style={{ backgroundColor: isOverCapacity ? '#fee2e2' : 'transparent', borderRadius: '12px 12px 0 0' }}>
+                <div>
+                  <div style={{ fontWeight: 'bold' }}>{driver.name}</div>
+                  {driver.id !== null && (
+                    <div style={{ fontSize: '0.75rem', color: isOverCapacity ? '#ef4444' : 'var(--text-muted)', marginTop: '4px' }}>
+                      {totalPallets} / {driver.maxPallets} Pallets
+                    </div>
+                  )}
+                </div>
                 <span className="kanban-badge">{driverRides.length}</span>
               </div>
               
