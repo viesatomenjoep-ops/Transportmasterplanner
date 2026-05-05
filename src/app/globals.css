@@ -401,3 +401,145 @@ body {
     min-width: 85vw; /* Make it almost full width on mobile */
   }
 }
+
+/* Track & Trace Portaal Styles */
+.track-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.track-header {
+  background-color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.track-brand {
+  font-weight: 800;
+  color: #2563eb;
+  font-size: 1.25rem;
+}
+
+.track-ride-id {
+  font-size: 0.85rem;
+  color: #64748b;
+  background-color: #f1f5f9;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.track-main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.track-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Map Animation */
+.map-background {
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
+}
+
+.moving-truck {
+  position: absolute;
+  top: 50%;
+  font-size: 2.5rem;
+  transform: translateY(-50%);
+  animation: driveTruck 8s linear infinite;
+}
+
+@keyframes driveTruck {
+  0% { left: -50px; }
+  100% { left: 100%; }
+}
+
+/* Timeline */
+.timeline-container {
+  position: relative;
+  padding-top: 24px;
+}
+
+.timeline-bar-bg {
+  position: absolute;
+  top: 32px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background-color: #e2e8f0;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.timeline-bar-fill {
+  height: 100%;
+  background-color: #2563eb;
+  border-radius: 2px;
+  transition: width 1s ease-in-out;
+}
+
+.timeline-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-step {
+  width: 80px;
+  opacity: 0.5;
+  transition: opacity 0.5s;
+}
+
+.timeline-step.active {
+  opacity: 1;
+}
+
+.step-dot {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 4px solid #e2e8f0;
+  border-radius: 50%;
+  margin-bottom: 8px;
+  transition: border-color 0.5s;
+}
+
+.timeline-step.active .step-dot {
+  border-color: #2563eb;
+}
+
+.step-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.step-location {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.2;
+}

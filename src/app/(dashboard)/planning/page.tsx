@@ -127,11 +127,28 @@ export default function PlanningPage() {
                       <span>{ride.delivery_address}</span>
                     </div>
                     
-                    {ride.status === 'geladen' && (
-                       <div style={{ marginTop: '12px', display: 'inline-block', backgroundColor: 'var(--status-loaded)', color: 'white', padding: '2px 8px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                         Reeds Geladen
-                       </div>
-                    )}
+                    <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {ride.status === 'geladen' && (
+                         <div style={{ backgroundColor: 'var(--status-loaded)', color: 'white', padding: '2px 8px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                           Reeds Geladen
+                         </div>
+                      )}
+                      {ride.status === 'afgeleverd' && (
+                         <div style={{ backgroundColor: 'var(--status-delivered)', color: 'white', padding: '2px 8px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                           Afgeleverd
+                         </div>
+                      )}
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(`http://localhost:3000/track/${ride.id}`);
+                          alert('Magic Link gekopieerd! Plak dit in een e-mail naar de klant.');
+                        }}
+                        style={{ background: '#f1f5f9', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.7rem', cursor: 'pointer', color: '#0f172a' }}
+                      >
+                        🔗 Deel Magic Link
+                      </button>
+                    </div>
                   </div>
                 ))}
                 
