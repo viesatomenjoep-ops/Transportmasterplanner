@@ -4,7 +4,7 @@ export default function DriverLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="driver-layout" style={{ margin: '0 auto', maxWidth: '100%', '@media (min-width: 480px)': { maxWidth: '480px' } as any }}>
+    <div className="driver-layout" style={{ margin: '0 auto', maxWidth: '480px', width: '100%' }}>
       <main className="driver-main">
         {children}
       </main>
