@@ -6,7 +6,20 @@ import { supabase } from '@/lib/supabaseClient';
 export default function PlanningPage() {
   const [rides, setRides] = useState<any[]>([]);
   const [drivers, setDrivers] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [newRide, setNewRide] = useState({
+    customer_id: '',
+    pickup_address: '',
+    delivery_address: '',
+    pallets_count: 0,
+    total_weight_kg: 0,
+    transport_mode: 'road',
+    requires_customs: false
+  });
 
   useEffect(() => {
     fetchData();
@@ -14,16 +27,44 @@ export default function PlanningPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    // Fetch drivers
-    const { data: driversData } = await supabase.from('drivers').select('*');
-    // Fetch rides with customer info
-    const { data: ridesData } = await supabase
-      .from('rides')
-      .select('*, customers(company_name)');
+    const { data: driversData } = await supabase.from('drivers').select('*').eq('is_active', true);
+    const { data: ridesData } = await supabase.from('rides').select('*, customers(company_name)');
+    const { data: customersData } = await supabase.from('customers').select('*');
 
     if (driversData) setDrivers(driversData);
     if (ridesData) setRides(ridesData);
+    if (customersData) {
+      setCustomers(customersData);
+      if (customersData.length > 0) setNewRide(prev => ({ ...prev, customer_id: customersData[0].id }));
+    }
     setLoading(false);
+  };
+
+  const handleCreateRide = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newRide.customer_id) return alert('Selecteer een klant');
+    
+    const { data, error } = await supabase.from('rides').insert([
+      {
+        customer_id: newRide.customer_id,
+        pickup_address: newRide.pickup_address,
+        delivery_address: newRide.delivery_address,
+        pallets_count: newRide.pallets_count,
+        total_weight_kg: newRide.total_weight_kg,
+        transport_mode: newRide.transport_mode,
+        requires_customs: newRide.requires_customs,
+        status: 'gepland'
+      }
+    ]).select('*, customers(company_name)').single();
+    
+    if (error) {
+      console.error(error);
+      alert('Fout bij aanmaken rit');
+    } else if (data) {
+      setRides([...rides, data]);
+      setShowModal(false);
+      setNewRide({ customer_id: customers[0]?.id || '', pickup_address: '', delivery_address: '', pallets_count: 0, total_weight_kg: 0, transport_mode: 'road', requires_customs: false });
+    }
   };
 
   const onDragStart = (e: React.DragEvent, rideId: string) => {
@@ -76,7 +117,7 @@ export default function PlanningPage() {
           <h2 className="page-title">Rittenplanning (Masterplan Pro)</h2>
           <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.875rem' }}>AI waarschuwt bij overschrijding van pallet-capaciteit.</p>
         </div>
-        <button className="btn btn-primary">+ Nieuwe Rit Inplannen</button>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nieuwe Rit Inplannen</button>
       </div>
 
       <div className="kanban-board">
@@ -162,6 +203,70 @@ export default function PlanningPage() {
           );
         })}
       </div>
+
+      {/* Modal voor nieuwe rit */}
+      {showModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
+          <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ marginBottom: '24px' }}>Nieuwe Rit Aanmaken</h2>
+            <form onSubmit={handleCreateRide} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Klant</label>
+                <select 
+                  value={newRide.customer_id} 
+                  onChange={e => setNewRide({...newRide, customer_id: e.target.value})}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  required
+                >
+                  <option value="" disabled>Selecteer klant...</option>
+                  {customers.map(c => <option key={c.id} value={c.id}>{c.company_name}</option>)}
+                </select>
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Ophaal Adres</label>
+                <input type="text" required value={newRide.pickup_address} onChange={e => setNewRide({...newRide, pickup_address: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} placeholder="Bijv. Haven Rotterdam" />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Aflever Adres</label>
+                <input type="text" required value={newRide.delivery_address} onChange={e => setNewRide({...newRide, delivery_address: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} placeholder="Bijv. Distributiecentrum Amsterdam" />
+              </div>
+              
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Pallets</label>
+                  <input type="number" min="0" required value={newRide.pallets_count} onChange={e => setNewRide({...newRide, pallets_count: parseInt(e.target.value) || 0})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Gewicht (kg)</label>
+                  <input type="number" min="0" required value={newRide.total_weight_kg} onChange={e => setNewRide({...newRide, total_weight_kg: parseInt(e.target.value) || 0})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Transport Mode</label>
+                  <select value={newRide.transport_mode} onChange={e => setNewRide({...newRide, transport_mode: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                    <option value="road">Wegtransport (Road)</option>
+                    <option value="sea">Zeevracht (Sea)</option>
+                    <option value="air">Luchtvracht (Air)</option>
+                  </select>
+                </div>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', marginTop: '24px' }}>
+                  <input type="checkbox" id="douane" checked={newRide.requires_customs} onChange={e => setNewRide({...newRide, requires_customs: e.target.checked})} style={{ width: '20px', height: '20px' }} />
+                  <label htmlFor="douane" style={{ fontWeight: 'bold', color: '#ef4444' }}>Douane vereist?</label>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
+                <button type="button" onClick={() => setShowModal(false)} className="btn" style={{ flex: 1, backgroundColor: '#e2e8f0', color: '#000' }}>Annuleer</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Aanmaken</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

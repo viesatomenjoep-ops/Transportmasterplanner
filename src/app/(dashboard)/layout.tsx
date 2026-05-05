@@ -25,12 +25,30 @@ export default function DashboardLayout({
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-brand-container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <img 
-              src="/logo.png" 
-              alt="Viesa Logo" 
-              style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '12px' }}
-              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/80x80?text=Logo'; }}
-            />
+            <svg 
+              width="80" 
+              height="80" 
+              viewBox="0 0 200 200" 
+              style={{ marginBottom: '12px' }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Dark Blue Hexagon Background */}
+              <polygon points="100,5 190,55 190,145 100,195 10,145 10,55" fill="#204257" />
+              
+              {/* The 'V' Shape */}
+              <path d="M 60 50 L 100 130 L 140 50 L 120 50 L 100 90 L 80 50 Z" fill="white" />
+              <path d="M 85 50 L 100 80 L 115 50 Z" fill="white" />
+              <polygon points="100,140 108,125 116,140" fill="white" />
+              
+              {/* The Truck Icon */}
+              <path d="M 50 110 L 110 110 L 110 150 L 50 150 Z" fill="white" />
+              <path d="M 115 125 L 140 125 L 150 140 L 150 150 L 115 150 Z" fill="white" />
+              <polygon points="120,128 135,128 142,138 120,138" fill="#204257" />
+              <circle cx="70" cy="150" r="12" fill="white" />
+              <circle cx="70" cy="150" r="6" fill="#204257" />
+              <circle cx="130" cy="150" r="12" fill="white" />
+              <circle cx="130" cy="150" r="6" fill="#204257" />
+            </svg>
             <button className="mobile-only-btn" onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-main)' }}>✕</button>
           </div>
           <h1 className="viesa-title">Viesa Master Transport Planner</h1>
