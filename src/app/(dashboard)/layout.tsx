@@ -40,9 +40,13 @@ export default function DashboardLayout({
             <span style={{ marginRight: '12px' }}>📊</span>
             Dashboard
           </Link>
-          <Link href="/planning" className="nav-link active" onClick={() => setSidebarOpen(false)}>
-            <span style={{ marginRight: '12px' }}>🚚</span>
-            Rittenplanning
+          <Link href="/planning" className="nav-link" onClick={() => setSidebarOpen(false)}>
+            <span style={{ marginRight: '12px' }}>📅</span>
+            Planbord
+          </Link>
+          <Link href="/order-entry" className="nav-link" onClick={() => setSidebarOpen(false)}>
+            <span style={{ marginRight: '12px' }}>📝</span>
+            Nieuwe Order
           </Link>
           <Link href="/drivers" className="nav-link" onClick={() => setSidebarOpen(false)}>
             <span style={{ marginRight: '12px' }}>👥</span>

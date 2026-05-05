@@ -182,12 +182,34 @@ export default function PlanningPage() {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigator.clipboard.writeText(`http://localhost:3000/track/${ride.id}`);
-                          alert('Magic Link gekopieerd! Plak dit in een e-mail naar de klant.');
+                          navigator.clipboard.writeText(`http://localhost:3000/driver/${ride.driver_id || 'unassigned'}`);
+                          alert('Chauffeurs Magic Link gekopieerd!');
                         }}
                         style={{ background: '#f1f5f9', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.7rem', cursor: 'pointer', color: '#0f172a' }}
                       >
-                        🔗 Deel Magic Link
+                        🔗 Kopieer Chauffeurs Link
+                      </button>
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!ride.driver_id) return alert('Wijs eerst een chauffeur toe!');
+                          
+                          // Simuleer WhatsApp API call
+                          try {
+                            const res = await fetch('/api/whatsapp', {
+                              method: 'POST',
+                              body: JSON.stringify({ driver_id: ride.driver_id, driver_phone: '+31612345678', ride_id: ride.id }),
+                              headers: { 'Content-Type': 'application/json' }
+                            });
+                            if (res.ok) alert('✅ WhatsApp verstuurd naar chauffeur!');
+                            else alert('Fout bij versturen WhatsApp');
+                          } catch(err) {
+                            alert('Fout bij versturen WhatsApp');
+                          }
+                        }}
+                        style={{ background: '#25D366', border: 'none', borderRadius: '4px', padding: '2px 8px', fontSize: '0.7rem', cursor: 'pointer', color: 'white', fontWeight: 'bold' }}
+                      >
+                        💬 Stuur WhatsApp
                       </button>
                     </div>
                   </div>

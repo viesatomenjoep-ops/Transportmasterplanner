@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
-const MY_DRIVER_ID = 'd1000000-0000-0000-0000-000000000001';
-
-export default function DriverPage() {
+export default function DriverPage({ params }: { params: { driver_id: string } }) {
   const [ride, setRide] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
@@ -18,7 +16,7 @@ export default function DriverPage() {
   const [palletsReturned, setPalletsReturned] = useState(0);
 
   useEffect(() => {
-    fetchMyRide();
+    fetchActiveRide();
     
     // Simuleer aflopende tacho timer
     const interval = setInterval(() => {
@@ -27,16 +25,20 @@ export default function DriverPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchMyRide = async () => {
+  const fetchActiveRide = async () => {
     setLoading(true);
-    const { data } = await supabase
+    // Fetch the active ride for this specific driver
+    const { data: ridesData } = await supabase
       .from('rides')
       .select('*, customers(company_name)')
-      .eq('driver_id', MY_DRIVER_ID)
-      .limit(1)
-      .single();
-    
-    if (data) setRide(data);
+      .eq('driver_id', params.driver_id)
+      .neq('status', 'afgeleverd')
+      .order('created_at', { ascending: true })
+      .limit(1);
+
+    if (ridesData && ridesData.length > 0) {
+      setRide(ridesData[0]);
+    }
     setLoading(false);
   };
 
@@ -110,13 +112,13 @@ export default function DriverPage() {
         <p className="address" style={{marginBottom: '8px'}}>📍 Laad: {ride.pickup_address}</p>
         <p className="address">📍 Los: {ride.delivery_address}</p>
         
-        <div className="details-grid">
+        <div className="details-grid animate-slide-up">
           <div><span>Gewicht</span><strong>{ride.total_weight_kg || '-'} kg</strong></div>
           <div><span>Pallets</span><strong>{ride.pallets_count || '-'} stks</strong></div>
         </div>
 
         {ride.requires_customs && (
-           <div style={{ backgroundColor: '#7f1d1d', border: '1px solid #ef4444', color: '#fecaca', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
+           <div className="animate-pulse-danger transition-all-smooth" style={{ backgroundColor: '#7f1d1d', border: '1px solid #ef4444', color: '#fecaca', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
              <h3 style={{ fontSize: '1rem', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                <span>🛑</span> DOUANE LOCKDOWN
              </h3>
@@ -125,7 +127,7 @@ export default function DriverPage() {
         )}
 
         {ride.status === 'gepland' && !ride.requires_customs && (
-          <button className="btn-massive btn-blue" onClick={() => handleStatusUpdate('geladen')}>Start Rit (Gereed voor vertrek)</button>
+          <button className="btn-massive btn-blue animate-pulse-active transition-all-smooth" onClick={() => handleStatusUpdate('geladen')}>Start Rit (Gereed voor vertrek)</button>
         )}
         
         {ride.status === 'gepland' && ride.requires_customs && (
@@ -134,9 +136,13 @@ export default function DriverPage() {
         
         {ride.status === 'geladen' && (
           <>
-            <button className="btn-massive btn-blue" style={{ marginBottom: '16px' }}>Navigeer (Truck Route)</button>
-            <button className="btn-massive btn-green" onClick={() => setShowPodModal(true)}>Aankomst & POD Tekenen</button>
+            <button className="btn-massive btn-blue transition-all-smooth" style={{ marginBottom: '16px' }}>Navigeer (Truck Route)</button>
+            <button className="btn-massive btn-green animate-pulse-active transition-all-smooth" onClick={() => handleStatusUpdate('onderweg_naar_losadres')}>Bevestig Aankomst Losadres</button>
           </>
+        )}
+        
+        {ride.status === 'onderweg_naar_losadres' && (
+          <button className="btn-massive btn-green animate-pulse-active transition-all-smooth" onClick={() => setShowPodModal(true)}>Aankomst & POD Tekenen</button>
         )}
         
         {ride.status === 'afgeleverd' && (
