@@ -40,6 +40,8 @@ body {
   padding: 24px;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease;
+  z-index: 50;
 }
 
 .sidebar-brand {
@@ -128,6 +130,7 @@ body {
   height: calc(100vh - 180px);
   overflow-x: auto;
   padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
 }
 
 .kanban-column {
@@ -138,6 +141,7 @@ body {
   min-width: 320px;
   display: flex;
   flex-direction: column;
+  scroll-snap-align: start;
 }
 
 .kanban-header {
@@ -174,6 +178,7 @@ body {
   cursor: grab;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: transform 0.1s, box-shadow 0.1s;
+  touch-action: pan-y;
 }
 
 .ride-card:active {
@@ -206,9 +211,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: var(--background-dark); /* Dark mode for cabin */
+  background-color: var(--background-dark);
   color: white;
-  max-width: 480px; /* iPhone width */
   margin: 0 auto;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   position: relative;
@@ -231,7 +235,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding-bottom: 16px; /* SafeArea bottom */
+  padding-bottom: 16px;
 }
 
 .nav-item {
@@ -353,4 +357,47 @@ body {
   justify-content: center;
   font-size: 0.75rem;
   font-weight: bold;
+}
+
+/* Responsive Overrides */
+.mobile-only-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only-btn {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .search-bar {
+    display: none;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .header {
+    padding: 0 16px;
+  }
+  
+  .content-area {
+    padding: 16px;
+  }
+  
+  .kanban-column {
+    min-width: 85vw; /* Make it almost full width on mobile */
+  }
 }
