@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function DriverPage({ params }: { params: { driver_id: string } }) {
+export default function DriverPage() {
+  const params = useParams();
   const [ride, setRide] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
