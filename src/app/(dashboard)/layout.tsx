@@ -32,7 +32,7 @@ export default function DashboardLayout({
             />
             <button className="mobile-only-btn" onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-main)' }}>✕</button>
           </div>
-          <h1 className="viesa-title">Viesa Master Transport Planner</h1>
+          <h1 className="viesa-title">Viesa Master Transportplanner</h1>
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column' }}>
