@@ -44,11 +44,19 @@ body {
   z-index: 50;
 }
 
-.sidebar-brand {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 40px;
+.sidebar-brand-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;
+}
+
+.viesa-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: #0f172a; /* Zwart/Donkerblauw zoals gevraagd */
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .nav-link {

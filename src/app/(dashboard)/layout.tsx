@@ -23,10 +23,19 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-brand" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>TransportApp</span>
-          <button className="mobile-only-btn" onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-main)' }}>✕</button>
+        <div className="sidebar-brand-container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <img 
+              src="/logo.png" 
+              alt="Viesa Logo" 
+              style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '12px' }}
+              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/80x80?text=Logo'; }}
+            />
+            <button className="mobile-only-btn" onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-main)' }}>✕</button>
+          </div>
+          <h1 className="viesa-title">Viesa Master Transport Planner</h1>
         </div>
+        
         <nav style={{ display: 'flex', flexDirection: 'column' }}>
           <Link href="/" className="nav-link" onClick={() => setSidebarOpen(false)}>
             <span style={{ marginRight: '12px' }}>📊</span>
